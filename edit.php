@@ -51,7 +51,7 @@ if (isset($_POST["submit"])) {
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Pet Name:</label>
-                        <input type="text" class="form-control" name="name" value="<?php echo $pet['Name']; ?>" required>
+                        <input type="text" class="form-control" name="name" value="<?php echo $pet['PetName']; ?>" required>
                     </div>
 
                     <div class="col-md-6">

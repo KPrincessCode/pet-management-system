@@ -45,7 +45,7 @@ if (isset($_GET["msg"])) {
                         ?>
                         <tr>
                             <td><?php echo $row["PetID"]; ?></td>
-                            <td><?php echo $row["Name"]; ?></td>
+                            <td><?php echo $row["PetName"]; ?></td>
                             <td><?php echo $row["Species"]; ?></td>
                             <td><?php echo $row["Breed"]; ?></td>
                             <td><?php echo $row["Gender"]; ?></td>
