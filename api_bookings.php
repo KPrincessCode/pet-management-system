@@ -47,17 +47,18 @@ if ($response === false) {
             <?php if (!empty($bookings)): ?>
                 <?php foreach ($bookings as $booking): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($booking['id'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($booking['owner_name'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($booking['pet_type'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($booking['service_type'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($booking['medicine_needed'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($booking['injection_status'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($booking['check_in_date'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($booking['check_out_date'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($booking['payment_amount'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($booking['payment_status'] ?? ''); ?></td>
+                        <td><?= htmlspecialchars($booking['id'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($booking['owner_name'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($booking['pet_type'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($booking['service_type'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($booking['medicine_needed'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($booking['injection_status'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($booking['check_in_date'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($booking['check_out_date'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($booking['payment_amount'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($booking['payment_status'] ?? '') ?></td>
 
+                        <!-- Booking Status -->
                         <td>
                             <?php if (($booking['status'] ?? '') == 'Approved'): ?>
                                 <span class="badge bg-success">Approved</span>
@@ -68,6 +69,7 @@ if ($response === false) {
                             <?php endif; ?>
                         </td>
 
+                        <!-- Remarks -->
                         <td>
                             <?php
                             $hasRemark = false;
@@ -88,34 +90,37 @@ if ($response === false) {
                             ?>
                         </td>
 
+                        <!-- Action -->
                         <td>
                             <?php if (($booking['status'] ?? '') == 'Pending'): ?>
                                 <form method="POST" action="update_booking_status.php" style="display:inline;">
-                                    <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['id']); ?>">
+                                    <input type="hidden" name="booking_id" value="<?= htmlspecialchars($booking['id']) ?>">
                                     <input type="hidden" name="status" value="Approved">
                                     <button type="submit" class="btn btn-success btn-sm">Approve</button>
                                 </form>
 
                                 <form method="POST" action="update_booking_status.php" style="display:inline;">
-                                    <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['id']); ?>">
+                                    <input type="hidden" name="booking_id" value="<?= htmlspecialchars($booking['id']) ?>">
                                     <input type="hidden" name="status" value="Rejected">
                                     <button type="submit" class="btn btn-danger btn-sm">Reject</button>
                                 </form>
                             <?php else: ?>
-                                <span class="text-muted">No action</span>
+                                <?php if (($booking['status'] ?? '') == 'Approved'): ?>
+                                    <span class="badge bg-success">Accepted</span>
+                                <?php elseif (($booking['status'] ?? '') == 'Rejected'): ?>
+                                    <span class="badge bg-danger">Rejected</span>
+                                <?php else: ?>
+                                    <span class="badge bg-secondary">Processed</span>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
-           <?php else: ?>
-    <?php if (($booking['status'] ?? '') == 'Approved'): ?>
-        <span class="badge bg-success">Accepted</span>
-    <?php elseif (($booking['status'] ?? '') == 'Rejected'): ?>
-        <span class="badge bg-danger">Rejected</span>
-    <?php else: ?>
-        <span class="badge bg-secondary">Processed</span>
-    <?php endif; ?>
-<?php endif; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="13" class="text-center">No bookings found</td>
+                </tr>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>
