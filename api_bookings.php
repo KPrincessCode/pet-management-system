@@ -39,8 +39,10 @@ if ($response === false) {
                 <th>Payment Status</th>
                 <th>Booking Status</th>
                 <th>Remarks</th>
+                <th>Action</th>
             </tr>
         </thead>
+
         <tbody>
             <?php if (!empty($bookings)): ?>
                 <?php foreach ($bookings as $booking): ?>
@@ -55,23 +57,65 @@ if ($response === false) {
                         <td><?php echo htmlspecialchars($booking['check_out_date'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($booking['payment_amount'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($booking['payment_status'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($booking['status'] ?? ''); ?></td>
-                        <td>
-                            <?php if (($booking['injection_status'] ?? '') == 'No'): ?>
-                                <span class="badge bg-warning text-dark">Vaccination Needed</span>
-                            <?php endif; ?>
 
-                            <?php if (($booking['medicine_needed'] ?? '') == 'Yes'): ?>
-                                <span class="badge bg-danger">Medicine Needed</span>
+                        <td>
+                            <?php if (($booking['status'] ?? '') == 'Approved'): ?>
+                                <span class="badge bg-success">Approved</span>
+                            <?php elseif (($booking['status'] ?? '') == 'Rejected'): ?>
+                                <span class="badge bg-danger">Rejected</span>
+                            <?php else: ?>
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            <?php endif; ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            $hasRemark = false;
+
+                            if (($booking['injection_status'] ?? '') == 'No') {
+                                echo '<span class="badge bg-warning text-dark">Vaccination Needed</span> ';
+                                $hasRemark = true;
+                            }
+
+                            if (($booking['medicine_needed'] ?? '') == 'Yes') {
+                                echo '<span class="badge bg-danger">Medicine Needed</span>';
+                                $hasRemark = true;
+                            }
+
+                            if (!$hasRemark) {
+                                echo '<span class="badge bg-success">No Issues</span>';
+                            }
+                            ?>
+                        </td>
+
+                        <td>
+                            <?php if (($booking['status'] ?? '') == 'Pending'): ?>
+                                <form method="POST" action="update_booking_status.php" style="display:inline;">
+                                    <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['id']); ?>">
+                                    <input type="hidden" name="status" value="Approved">
+                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                </form>
+
+                                <form method="POST" action="update_booking_status.php" style="display:inline;">
+                                    <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking['id']); ?>">
+                                    <input type="hidden" name="status" value="Rejected">
+                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                </form>
+                            <?php else: ?>
+                                <span class="text-muted">No action</span>
                             <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="12" class="text-center">No bookings found</td>
-                </tr>
-            <?php endif; ?>
+           <?php else: ?>
+    <?php if (($booking['status'] ?? '') == 'Approved'): ?>
+        <span class="badge bg-success">Accepted</span>
+    <?php elseif (($booking['status'] ?? '') == 'Rejected'): ?>
+        <span class="badge bg-danger">Rejected</span>
+    <?php else: ?>
+        <span class="badge bg-secondary">Processed</span>
+    <?php endif; ?>
+<?php endif; ?>
         </tbody>
     </table>
 </div>
