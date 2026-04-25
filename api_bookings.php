@@ -56,7 +56,15 @@ if ($response === false) {
                         <td><?= htmlspecialchars($booking['check_in_date'] ?? '') ?></td>
                         <td><?= htmlspecialchars($booking['check_out_date'] ?? '') ?></td>
                         <td><?= htmlspecialchars($booking['payment_amount'] ?? '') ?></td>
-                        <td><?= htmlspecialchars($booking['payment_status'] ?? '') ?></td>
+                        <td>
+    <?php if (($booking['payment_status'] ?? '') == 'paid'): ?>
+        <span class="badge bg-success">Paid</span>
+    <?php elseif (($booking['payment_status'] ?? '') == 'unpaid'): ?>
+        <span class="badge bg-warning text-dark">Unpaid</span>
+    <?php else: ?>
+        <span class="badge bg-secondary">Not Set</span>
+    <?php endif; ?>
+</td>
 
                         <td>
                             <?php if (($booking['status'] ?? '') == 'Approved'): ?>
@@ -89,40 +97,44 @@ if ($response === false) {
                         </td>
 
                         <td>
-                            <?php if (($booking['status'] ?? '') == 'Pending'): ?>
-                                <form method="POST" action="update_booking_status.php" style="display:inline;">
-                                    <input type="hidden" name="booking_id" value="<?= htmlspecialchars($booking['id']) ?>">
-                                    <input type="hidden" name="status" value="Approved">
-                                    <button 
-                                        type="submit" 
-                                        class="btn btn-success btn-sm"
-                                        onclick="return confirm('Are you sure you want to approve this booking?');"
-                                    >
-                                        Approve
-                                    </button>
-                                </form>
+    <?php if (($booking['status'] ?? '') == 'Pending' && ($booking['payment_status'] ?? '') == 'paid'): ?>
+        <form method="POST" action="update_booking_status.php" style="display:inline;">
+            <input type="hidden" name="booking_id" value="<?= htmlspecialchars($booking['id']) ?>">
+            <input type="hidden" name="status" value="Approved">
+            <button 
+                type="submit" 
+                class="btn btn-success btn-sm"
+                onclick="return confirm('Are you sure you want to approve this booking?');"
+            >
+                Approve
+            </button>
+        </form>
 
-                                <form method="POST" action="update_booking_status.php" style="display:inline;">
-                                    <input type="hidden" name="booking_id" value="<?= htmlspecialchars($booking['id']) ?>">
-                                    <input type="hidden" name="status" value="Rejected">
-                                    <button 
-                                        type="submit" 
-                                        class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Are you sure you want to reject this booking?');"
-                                    >
-                                        Reject
-                                    </button>
-                                </form>
-                            <?php else: ?>
-                                <?php if (($booking['status'] ?? '') == 'Approved'): ?>
-                                    <span class="badge bg-success">Accepted</span>
-                                <?php elseif (($booking['status'] ?? '') == 'Rejected'): ?>
-                                    <span class="badge bg-danger">Rejected</span>
-                                <?php else: ?>
-                                    <span class="badge bg-secondary">Processed</span>
-                                <?php endif; ?>
-                            <?php endif; ?>
-                        </td>
+        <form method="POST" action="update_booking_status.php" style="display:inline;">
+            <input type="hidden" name="booking_id" value="<?= htmlspecialchars($booking['id']) ?>">
+            <input type="hidden" name="status" value="Rejected">
+            <button 
+                type="submit" 
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('Are you sure you want to reject this booking?');"
+            >
+                Reject
+            </button>
+        </form>
+
+    <?php elseif (($booking['status'] ?? '') == 'Pending' && ($booking['payment_status'] ?? '') != 'paid'): ?>
+        <span class="badge bg-warning text-dark">Payment Required</span>
+
+    <?php else: ?>
+        <?php if (($booking['status'] ?? '') == 'Approved'): ?>
+            <span class="badge bg-success">Accepted</span>
+        <?php elseif (($booking['status'] ?? '') == 'Rejected'): ?>
+            <span class="badge bg-danger">Rejected</span>
+        <?php else: ?>
+            <span class="badge bg-secondary">Processed</span>
+        <?php endif; ?>
+    <?php endif; ?>
+</td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
