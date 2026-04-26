@@ -7,16 +7,24 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $bookingId = $_POST['booking_id'] ?? null;
 $status = $_POST['status'] ?? null;
+$adminNotes = trim($_POST['admin_notes'] ?? '');
 
 if (!$bookingId || !$status) {
     header("Location: api_bookings.php");
     exit;
 }
 
-$apiUrl = "http://127.0.0.1:8000/api/bookings/" . $bookingId;
+if ($status === 'Approved') {
+    $apiUrl = "http://127.0.0.1:8000/api/bookings/" . $bookingId . "/approve";
+} elseif ($status === 'Rejected') {
+    $apiUrl = "http://127.0.0.1:8000/api/bookings/" . $bookingId . "/reject";
+} else {
+    header("Location: api_bookings.php");
+    exit;
+}
 
 $data = http_build_query([
-    'status' => $status
+    'admin_notes' => $adminNotes
 ]);
 
 $options = [
